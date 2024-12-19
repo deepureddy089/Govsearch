@@ -79,47 +79,53 @@
     <div class="container text-center search-container">
         <h1 id="dynamic-title">Search Government <span id="scheme-word" class="scheme-word">Schemes</span></h1>
 
-        <form action="results.php" method="GET" class="mt-4">
-            <!-- Search Bar and Button -->
-            <div class="input-group mb-4 justify-content-center">
-                <input type="text" class="form-control search-bar" name="query" placeholder="Start typing scheme name..." required>
-                <div class="input-group-append">
-                    <button class="btn search-button" type="submit">Search</button>
-                </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <!-- State Dropdown -->
-                <div class="col-md-3 mb-3">
-                    <select class="form-control filter-dropdown" name="state" required>
-                        <option value="">Select State</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Telangana State">Telangana State</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                    </select>
-                </div>
-                <!-- Age Group Dropdown -->
-                <div class="col-md-3 mb-3">
-                    <select class="form-control filter-dropdown" name="age_group" required>
-                        <option value="">Select Age Group</option>
-                        <option value="0-18">0-18</option>
-                        <option value="19-60">19-60</option>
-                        <option value="60+">60 and above</option>
-                    </select>
-                </div>
-                <!-- Caste Dropdown -->
-                <div class="col-md-3 mb-3">
-                    <select class="form-control filter-dropdown" name="caste" required>
-                        <option value="">Select Caste</option>
-                        <option value="OC">OC</option>
-                        <option value="OBC">OBC</option>
-                        <option value="BC">BC</option>
-                        <option value="SC">SC</option>
-                        <option value="ST">ST</option>
-                    </select>
-                </div>
-            </div>
-        </form>
+        <form action="results.php" method="POST" class="mt-4">
+    <!-- Search Bar and Button -->
+    <div class="input-group mb-4 justify-content-center">
+        <input type="text" class="form-control search-bar" name="query" placeholder="Start typing scheme name..." required>
+        <div class="input-group-append">
+            <button class="btn search-button" type="submit">Search</button>
+        </div>
+    </div>
+
+    <div class="form-row justify-content-center">
+        <!-- State Dropdown -->
+        <div class="col-md-3 mb-3">
+            <select class="form-control filter-dropdown" name="state" required>
+                <option value="">Select State</option>
+                <option value="National">National</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Telangana State">Telangana State</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+            </select>
+        </div>
+
+        <!-- Age Group Dropdown -->
+        <div class="col-md-3 mb-3">
+            <select class="form-control filter-dropdown" name="age_group" required>
+                <option value="">Select Age Group</option>
+                <option value="ALL">ALL</option>
+                <option value="0-18">0-18</option>
+                <option value="19-60">19-60</option>
+                <option value="60+">60+</option>
+            </select>
+        </div>
+
+        <!-- Caste Dropdown -->
+        <div class="col-md-3 mb-3">
+            <select class="form-control filter-dropdown" name="caste" required>
+                <option value="">Select Caste</option>
+                <option value="ALL">ALL</option>
+                <option value="OC">OC</option>
+                <option value="OBC">OBC</option>
+                <option value="BC">BC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+            </select>
+        </div>
+    </div>
+</form>
 
         <!-- Description Section placed right above footer -->
         <p id="description-text" class="description">
