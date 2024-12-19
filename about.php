@@ -35,7 +35,7 @@
 
     /* Login Button Alignment and Styling */
     .login-button {
-        align: left;
+        
         background-color: #ffffff; /* Similar to search button on the index page */
         color: #000000; /* Black text */
         border-radius: 30px;
