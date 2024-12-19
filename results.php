@@ -1,70 +1,95 @@
-<?php 
-include 'header.php'; 
-include 'db_connection.php'; // Make sure you have a database connection
+<?php
+// Include the database connection
+include('db_connection.php'); 
 
-// Capture form data if submitted
-$state = isset($_POST['state']) ? $_POST['state'] : '';
-$age_group = isset($_POST['age_group']) ? $_POST['age_group'] : '';
-$caste = isset($_POST['caste']) ? $_POST['caste'] : '';
-$scheme_name = isset($_POST['query']) ? $_POST['query'] : '';
+// Fetch filters from the URL
+$query = isset($_GET['query']) ? $_GET['query'] : '';
+$state = isset($_GET['state']) ? $_GET['state'] : '';
+$age_group = isset($_GET['age_group']) ? $_GET['age_group'] : '';
+$caste = isset($_GET['caste']) ? $_GET['caste'] : '';
 
-// Construct the SQL query based on form data
-$query = "SELECT * FROM schemes WHERE 1";
+// Prepare SQL query with filters (using prepared statements to prevent SQL injection)
+$sql = "SELECT * FROM schemes WHERE 1=1";
 
-// Filter by state if selected
-if (!empty($state)) {
-    $query .= " AND state = '$state'";
+// Apply filters based on user input
+if ($query) {
+    $sql .= " AND scheme_name LIKE ?";
+}
+if ($state) {
+    $sql .= " AND state = ?";
+}
+if ($age_group) {
+    $sql .= " AND age_group = ?";
+}
+if ($caste) {
+    $sql .= " AND caste LIKE ?";
 }
 
-// Filter by age group if selected
-if (!empty($age_group)) {
-    if ($age_group == '60+') {
-        $query .= " AND age_bracket = '60+'";
-    } elseif ($age_group == '19-60') {
-        $query .= " AND age_bracket = '19-60'";
-    } elseif ($age_group == '0-18') {
-        $query .= " AND age_bracket = '0-18'";
-    }
-}
+// Prepare and execute the query
+$stmt = $conn->prepare($sql);
 
-// Filter by caste if selected
-if (!empty($caste)) {
-    $query .= " AND caste LIKE '%$caste%'";
+// Bind parameters to the query
+if ($query) {
+    $stmt->bind_param("s", $queryParam);
+    $queryParam = "%" . $query . "%";
 }
-
-// Filter by scheme name if provided
-if (!empty($scheme_name)) {
-    $query .= " AND scheme_name LIKE '%$scheme_name%'";
+if ($state) {
+    $stmt->bind_param("s", $stateParam);
+    $stateParam = $state;
+}
+if ($age_group) {
+    $stmt->bind_param("s", $ageGroupParam);
+    $ageGroupParam = $age_group;
+}
+if ($caste) {
+    $stmt->bind_param("s", $casteParam);
+    $casteParam = "%" . $caste . "%";
 }
 
 // Execute the query
-$result = mysqli_query($conn, $query);
-
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
+<?php include('header.php'); ?>
+
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Search Results</h2>
+    <h2>Scheme Results</h2>
 
-    <!-- Include the search form -->
-
-
-    <?php if (mysqli_num_rows($result) > 0): ?>
-        <div class="row">
-            <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card" style="border: 1px solid #ddd; padding: 20px;">
-                        <h5 class="card-title"><?php echo $row['scheme_name']; ?></h5>
-                        <p><strong>State:</strong> <?php echo $row['state']; ?></p>
-                        <p><strong>Eligibility:</strong> <?php echo $row['eligibility']; ?></p>
-                        <p><strong>Age Group:</strong> <?php echo $row['age_bracket']; ?></p>
-                        <p><strong>Caste:</strong> <?php echo $row['caste']; ?></p>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-        </div>
-    <?php else: ?>
-        <p>No schemes found matching your criteria.</p>
-    <?php endif; ?>
+    <div class="row">
+        <?php
+        // Display results in a grid
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Display each scheme as a card in a flexible container
+                echo '<div class="col-md-3 col-sm-6 col-12 mb-4">';
+                echo '<div class="card scheme-card">';
+                echo '<div class="card-header">' . htmlspecialchars($row['scheme_name']) . '</div>';
+                echo '<div class="card-body">';
+                echo '<p><strong>State:</strong> ' . htmlspecialchars($row['state']) . '</p>';
+                echo '<p><strong>Age Group:</strong> ' . htmlspecialchars($row['age_group']) . '</p>';
+                echo '<p><strong>Caste:</strong> ' . htmlspecialchars($row['caste']) . '</p>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+            }
+        } else {
+            echo '<p>No schemes found based on your filters.</p>';
+        }
+        ?>
+    </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include('footer.php'); ?>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+<?php
+// Close database connection
+$stmt->close();
+$conn->close();
+?>

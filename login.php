@@ -1,24 +1,61 @@
-<?php include 'header.php'; ?>
+<?php
+session_start();
+include('db_login_connection.php'); // Include the new admin login connection
 
-<div class="container-fluid d-flex flex-column justify-content-between" style="height: 90vh; padding: 0;">
-    <div class="d-flex justify-content-center align-items-center flex-grow-1">
-        <div class="login-box" style="width: 100%; max-width: 400px; padding: 30px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-            <h2 class="text-center" style="color: #000000;">Admin Login</h2>
+if (isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-            <form action="login_handler.php" method="POST">
-                <div class="form-group">
-                    <label for="username" style="color: #000000;">Username/Email</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username or email" required style="background-color: #ffffff; color: #000000; border: 2px solid #000000; border-radius: 4px;">
-                </div>
-                <div class="form-group">
-                    <label for="password" style="color: #000000;">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required style="background-color: #ffffff; color: #000000; border: 2px solid #000000; border-radius: 4px;">
-                </div>
-                <!-- Login Button with black background and hover effect -->
-                <button type="submit" class="btn search-button btn-block" style="border-radius: 30px; border: none; background-color: #000000; color: #ffffff; padding: 12px; transition: 0.3s;" onmouseover="this.style.backgroundColor='#ffffff'; this.style.color='#000000'" onmouseout="this.style.backgroundColor='#000000'; this.style.color='#ffffff'">Login</button>
-            </form>
-        </div>
+    // SQL query to fetch user details from the users table in the admin_login database
+    $query = "SELECT * FROM users WHERE username = ?";
+    $stmt = $conn_login->prepare($query);
+    $stmt->bind_param("s", $username); // Bind the username parameter
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if the user exists
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        
+        // Check if the password matches (plain-text comparison here, but hash in real production)
+        if ($password === $user['password']) {
+            $_SESSION['admin'] = $username; // Set session variable for successful login
+            header('Location: admin_dashboard.php'); // Redirect to the admin dashboard
+            exit;
+        } else {
+            $error = "Invalid password!";
+        }
+    } else {
+        $error = "No user found with that username!";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <?php include 'header.php'; ?>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Admin Login</h2>
+        <?php if (isset($error)) { echo "<div class='alert alert-danger'>$error</div>"; } ?>
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" name="submit" class="btn btn-primary">Login</button>
+        </form>
     </div>
-    <!-- Footer -->
     <?php include 'footer.php'; ?>
-</div>
+</body>
+</html>
