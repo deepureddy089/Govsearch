@@ -1,40 +1,43 @@
-<?php
-include 'header.php';
-include 'db_connection.php'; // Ensure you have a database connection
+<?php 
+include 'header.php'; 
+include 'db_connection.php'; // Make sure you have a database connection
 
 // Capture form data if submitted
 $state = isset($_POST['state']) ? $_POST['state'] : '';
 $age_group = isset($_POST['age_group']) ? $_POST['age_group'] : '';
 $caste = isset($_POST['caste']) ? $_POST['caste'] : '';
-$query = isset($_POST['query']) ? $_POST['query'] : ''; // Search query for scheme name
+$scheme_name = isset($_POST['query']) ? $_POST['query'] : '';
 
 // Construct the SQL query based on form data
-$sql_conditions = [];
+$query = "SELECT * FROM schemes WHERE 1";
 
+// Filter by state if selected
 if (!empty($state)) {
-    $sql_conditions[] = "state = '$state'";
+    $query .= " AND state = '$state'";
 }
 
+// Filter by age group if selected
 if (!empty($age_group)) {
-    $sql_conditions[] = "age_bracket = '$age_group'";
+    if ($age_group == '60+') {
+        $query .= " AND age_bracket = '60+'";
+    } elseif ($age_group == '19-60') {
+        $query .= " AND age_bracket = '19-60'";
+    } elseif ($age_group == '0-18') {
+        $query .= " AND age_bracket = '0-18'";
+    }
 }
 
+// Filter by caste if selected
 if (!empty($caste)) {
-    $sql_conditions[] = "caste LIKE '%$caste%'";
+    $query .= " AND caste LIKE '%$caste%'";
 }
 
-if (!empty($query)) {
-    // If user entered a scheme name, match it anywhere in the name field
-    $sql_conditions[] = "scheme_name LIKE '%$query%'";
+// Filter by scheme name if provided
+if (!empty($scheme_name)) {
+    $query .= " AND scheme_name LIKE '%$scheme_name%'";
 }
 
-// If no conditions were set, show all records (this is fallback)
-if (count($sql_conditions) > 0) {
-    $query = "SELECT * FROM schemes WHERE " . implode(" AND ", $sql_conditions);
-} else {
-    $query = "SELECT * FROM schemes"; // Return all results if no filter
-}
-
+// Execute the query
 $result = mysqli_query($conn, $query);
 
 ?>
@@ -42,7 +45,9 @@ $result = mysqli_query($conn, $query);
 <div class="container mt-5">
     <h2 class="text-center mb-4">Search Results</h2>
 
-    <!-- Display search results -->
+    <!-- Include the search form -->
+
+
     <?php if (mysqli_num_rows($result) > 0): ?>
         <div class="row">
             <?php while ($row = mysqli_fetch_assoc($result)): ?>
