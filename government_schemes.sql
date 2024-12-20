@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 20, 2024 at 11:21 AM
+-- Generation Time: Dec 20, 2024 at 12:03 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -45,7 +45,6 @@ INSERT INTO `schemes` (`id`, `scheme_name`, `state`, `age_group`, `caste`) VALUE
 (6, 'Kissan Subsidy Scheme', 'Tamil Nadu', '19-60', 'ST, SC'),
 (7, 'Telangana Pension Scheme', 'Maharashtra', '60+', 'BC,ST'),
 (8, 'Kissan Subsidy Scheme', 'Telangana', '19-60', 'ST, SC'),
-(9, 'Kissan Subsidy Scheme', 'Telangana', '19-60', 'ST, SC, OBC'),
 (10, 'Kissan Subsidy Scheme', 'Telangana', '19-60', 'ST, SC, OC'),
 (11, 'Karnataka Pension Scheme', 'Karnataka', '0-18', 'OBC'),
 (13, 'Karnataka Pension Scheme', 'Kerala', '0-18', 'OBC'),
