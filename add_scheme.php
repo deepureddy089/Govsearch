@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('db_connection.php');
+include('db_connection.php'); // Include your database connection
 
 // Check if user is logged in
 if (!isset($_SESSION['admin'])) {
@@ -8,13 +8,18 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
+// Fetch unique states from the database, sorted alphabetically
+$query = "SELECT DISTINCT state FROM schemes ORDER BY state ASC";
+$result = $conn->query($query);
+
+// Check if the form is submitted
 if (isset($_POST['submit'])) {
     $scheme_name = $_POST['scheme_name'];
     $state = $_POST['state'];
     $age_group = $_POST['age_group'];
     $caste = $_POST['caste'];
 
-    // Insert new scheme into database
+    // Insert new scheme into the database
     $sql = "INSERT INTO schemes (scheme_name, state, age_group, caste) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssss", $scheme_name, $state, $age_group, $caste);
@@ -47,7 +52,18 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="state">State</label>
-                <input type="text" class="form-control" id="state" name="state" required>
+                <select class="form-control" id="state" name="state" required>
+                    <option value="" disabled selected>Select a state</option>
+                    <?php
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value=\"" . htmlspecialchars($row['state']) . "\">" . htmlspecialchars($row['state']) . "</option>";
+                        }
+                    } else {
+                        echo "<option value=\"\" disabled>No states available</option>";
+                    }
+                    ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="age_group">Age Group</label>

@@ -1,3 +1,27 @@
+<?php
+// Include database connection file
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "government_schemes";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch unique states from the database
+$stateQuery = "SELECT DISTINCT state FROM schemes";
+$statesResult = $conn->query($stateQuery);
+
+// Fetch unique age groups from the database
+$ageGroupQuery = "SELECT DISTINCT age_group FROM schemes";
+$ageGroupsResult = $conn->query($ageGroupQuery);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,26 +112,33 @@
                 </div>
             </div>
             <div class="form-row justify-content-center">
-                <!-- State Dropdown -->
+                <!-- State Dropdown - dynamically populated from database -->
                 <div class="col-md-3 mb-3">
                     <select class="form-control filter-dropdown" name="state">
                         <option value="">Select State</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Telangana State">Telangana State</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <?php
+                        if ($statesResult->num_rows > 0) {
+                            while($row = $statesResult->fetch_assoc()) {
+                                echo "<option value='" . $row['state'] . "'>" . $row['state'] . "</option>";
+                            }
+                        }
+                        ?>
                     </select>
                 </div>
-                <!-- Age Group Dropdown -->
+                <!-- Age Group Dropdown - dynamically populated from database -->
                 <div class="col-md-3 mb-3">
                     <select class="form-control filter-dropdown" name="age_group">
                         <option value="">Select Age Group</option>
-                        <option value="0-18">0-18</option>
-                        <option value="19-60">19-60</option>
-                        <option value="60+">60 and above</option>
+                        <?php
+                        if ($ageGroupsResult->num_rows > 0) {
+                            while($row = $ageGroupsResult->fetch_assoc()) {
+                                echo "<option value='" . $row['age_group'] . "'>" . $row['age_group'] . "</option>";
+                            }
+                        }
+                        ?>
                     </select>
                 </div>
-                <!-- Caste Dropdown -->
+                <!-- Caste Dropdown - static as per your original code -->
                 <div class="col-md-3 mb-3">
                     <select class="form-control filter-dropdown" name="caste">
                         <option value="">Select Caste</option>
@@ -120,7 +151,6 @@
                 </div>
             </div>
         </form>
-        
 
         <!-- Description Section placed right above footer -->
         <p id="description-text" class="description">
@@ -135,3 +165,8 @@
     <script src="homepage-lang-translation.js"></script>
 </body>
 </html>
+
+<?php
+// Close the database connection
+$conn->close();
+?>

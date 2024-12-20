@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 19, 2024 at 11:23 AM
+-- Generation Time: Dec 20, 2024 at 11:21 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -40,18 +40,29 @@ CREATE TABLE `schemes` (
 --
 
 INSERT INTO `schemes` (`id`, `scheme_name`, `state`, `age_group`, `caste`) VALUES
-(1, 'Andhra Pradesh Pension Scheme', 'Andhra Pradesh', '60+', 'OC'),
-(2, 'Kissan Subsidy Scheme', 'Andhra Pradesh', '19-60', 'ST, SC'),
 (3, 'Karnataka Pension Scheme', 'Karnataka', '60+', 'OBC'),
-(4, 'Kissan Subsidy Scheme', 'Karnataka', '19-60', 'ST, SC'),
 (5, 'Tamil Nadu Pension Scheme', 'Tamil Nadu', '60+', 'OC, SC, ST, BC,OBC'),
 (6, 'Kissan Subsidy Scheme', 'Tamil Nadu', '19-60', 'ST, SC'),
-(7, 'Telangana Pension Scheme', 'Telangana', '60+', 'BC,ST'),
+(7, 'Telangana Pension Scheme', 'Maharashtra', '60+', 'BC,ST'),
 (8, 'Kissan Subsidy Scheme', 'Telangana', '19-60', 'ST, SC'),
 (9, 'Kissan Subsidy Scheme', 'Telangana', '19-60', 'ST, SC, OBC'),
 (10, 'Kissan Subsidy Scheme', 'Telangana', '19-60', 'ST, SC, OC'),
 (11, 'Karnataka Pension Scheme', 'Karnataka', '0-18', 'OBC'),
-(12, 'Andhra Pradesh Pension Scheme', 'Andhra Pradesh', '19-60', 'OC');
+(13, 'Karnataka Pension Scheme', 'Kerala', '0-18', 'OBC'),
+(14, 'Karnataka Pension Scheme', 'Orrisa', '0-18', 'OBC'),
+(15, 'Karnataka Pension Scheme', 'Madhya Pradesh', '0-18', 'OBC'),
+(16, 'Kissan Subsidy Scheme', 'Gujarat', '19-60', 'ST, SC, OC'),
+(17, 'Tamil Nadu Pension Scheme', 'Delhi', '60+', 'OC, SC, ST, BC,OBC'),
+(18, 'Karnataka Pension Scheme', 'Uttar Pradesh', '60+', 'OBC'),
+(19, 'Karnataka Pension Scheme', 'Haryana', '60+', 'OBC'),
+(20, 'Karnataka Pension Scheme', 'Punjab', '60+', 'OBC'),
+(21, 'Karnataka Pension Scheme', 'Goa', '0-18', 'OBC'),
+(22, 'Kissan Subsidy Scheme', 'West Bengal', '19-60', 'ST, SC'),
+(23, 'Karnataka Pension Scheme', 'Assam', '60+', 'OBC'),
+(24, 'Kissan Subsidy Scheme', 'Mizoram', '19-60', 'ST, SC, OBC'),
+(25, 'Kissan Subsidy Scheme', 'Bihar', '19-60', 'ST, SC'),
+(26, 'Tamil Nadu Pension Scheme', 'Uttarakhand', '60+', 'OC, SC, ST, BC,OBC'),
+(27, 'Test Scheme', 'Karnataka', '0-18', 'OC, BC');
 
 --
 -- Indexes for dumped tables
@@ -71,7 +82,7 @@ ALTER TABLE `schemes`
 -- AUTO_INCREMENT for table `schemes`
 --
 ALTER TABLE `schemes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
