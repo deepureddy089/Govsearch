@@ -2,6 +2,13 @@
 session_start();
 include('db_login_connection.php'); // Include the new admin login connection
 
+// Check if the user is already logged in
+if (isset($_SESSION['admin'])) {
+    // Redirect to admin dashboard if logged in
+    header('Location: admin_dashboard.php');
+    exit;
+}
+
 if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];

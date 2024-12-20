@@ -1,3 +1,6 @@
+<?php
+session_start(); // Ensure the session is started
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,6 +85,10 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="https://localhost/govsearch/index.php">Home</a></li> 
                 <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
+                <!-- Add Dashboard Menu if User is Logged In -->
+                <?php if (isset($_SESSION['admin'])) { ?>
+                    <li class="nav-item"><a class="nav-link" href="admin_dashboard.php">Dashboard</a></li>
+                <?php } ?>
             </ul>
         </div>
     </nav>
