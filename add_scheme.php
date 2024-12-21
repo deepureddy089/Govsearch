@@ -18,11 +18,13 @@ if (isset($_POST['submit'])) {
     $state = $_POST['state'];
     $age_group = $_POST['age_group'];
     $caste = $_POST['caste'];
+    $state_logo = $_POST['state_logo'];
+    $scheme_link = $_POST['scheme_link'];
 
     // Insert new scheme into the database
-    $sql = "INSERT INTO schemes (scheme_name, state, age_group, caste) VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO schemes (scheme_name, state, age_group, caste, state_logo, scheme_link) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $scheme_name, $state, $age_group, $caste);
+    $stmt->bind_param("ssssss", $scheme_name, $state, $age_group, $caste, $state_logo, $scheme_link);
 
     if ($stmt->execute()) {
         header('Location: admin_dashboard.php');
@@ -72,6 +74,14 @@ if (isset($_POST['submit'])) {
             <div class="form-group">
                 <label for="caste">Caste</label>
                 <input type="text" class="form-control" id="caste" name="caste" required>
+            </div>
+            <div class="form-group">
+                <label for="state_logo">State Logo URL</label>
+                <input type="url" class="form-control" id="state_logo" name="state_logo" placeholder="Enter the URL of the state logo" required>
+            </div>
+            <div class="form-group">
+                <label for="scheme_link">Scheme Link</label>
+                <input type="url" class="form-control" id="scheme_link" name="scheme_link" placeholder="Enter the scheme link" required>
             </div>
             <button type="submit" name="submit" class="btn btn-primary">Add Scheme</button>
         </form>

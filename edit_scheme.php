@@ -30,11 +30,13 @@ if (isset($_GET['id'])) {
         $state = $_POST['state'];
         $age_group = $_POST['age_group'];
         $caste = $_POST['caste'];
+        $state_logo = $_POST['state_logo'];
+        $scheme_link = $_POST['scheme_link'];
 
         // Update scheme in the database
-        $update_sql = "UPDATE schemes SET scheme_name = ?, state = ?, age_group = ?, caste = ? WHERE id = ?";
+        $update_sql = "UPDATE schemes SET scheme_name = ?, state = ?, age_group = ?, caste = ?, state_logo = ?, scheme_link = ? WHERE id = ?";
         $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->bind_param("ssssi", $scheme_name, $state, $age_group, $caste, $scheme_id);
+        $update_stmt->bind_param("ssssssi", $scheme_name, $state, $age_group, $caste, $state_logo, $scheme_link, $scheme_id);
 
         if ($update_stmt->execute()) {
             header('Location: admin_dashboard.php');
@@ -75,6 +77,23 @@ if (isset($_GET['id'])) {
                 <label for="caste">Caste</label>
                 <input type="text" class="form-control" id="caste" name="caste" value="<?php echo htmlspecialchars($scheme['caste']); ?>" required>
             </div>
+
+            <!-- State Logo Edit Section -->
+            <div class="form-group">
+                <label for="state_logo">State Logo URL</label>
+                <input type="text" class="form-control" id="state_logo" name="state_logo" value="<?php echo htmlspecialchars($scheme['state_logo']); ?>" required>
+                <!-- Button to view logo -->
+                <button type="button" class="btn btn-info mt-2" onclick="window.open('<?php echo htmlspecialchars($scheme['state_logo']); ?>', '_blank')">View Logo</button>
+            </div>
+
+            <!-- Scheme Link Edit Section -->
+            <div class="form-group">
+                <label for="scheme_link">Scheme Link</label>
+                <input type="text" class="form-control" id="scheme_link" name="scheme_link" value="<?php echo htmlspecialchars($scheme['scheme_link']); ?>" required>
+                <!-- Button to view scheme link -->
+                <button type="button" class="btn btn-info mt-2" onclick="window.open('<?php echo htmlspecialchars($scheme['scheme_link']); ?>', '_blank')">View Link</button>
+            </div>
+
             <button type="submit" name="submit" class="btn btn-primary">Update Scheme</button>
         </form>
     </div>

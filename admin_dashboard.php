@@ -30,6 +30,12 @@ $total_pages = ceil($total_states / $items_per_page);
 $page_schemes = isset($_GET['page_schemes']) ? (int)$_GET['page_schemes'] : 1;
 $offset_schemes = ($page_schemes - 1) * $items_per_page;
 
+// Get the total number of schemes for pagination
+$total_schemes_sql = "SELECT COUNT(*) AS total_schemes FROM schemes";
+$total_schemes_result = $conn->query($total_schemes_sql);
+$total_schemes = $total_schemes_result->fetch_assoc()['total_schemes'];
+$total_schemes_pages = ceil($total_schemes / $items_per_page);
+
 // Fetch all schemes with pagination for the "All Schemes" section
 $sql_schemes = "SELECT * FROM schemes LIMIT ?, ?";
 $stmt_schemes = $conn->prepare($sql_schemes);
@@ -147,6 +153,8 @@ include('header.php');
                             <a href="edit_scheme.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
                             <!-- Delete button with confirmation prompt -->
                             <a href="delete_scheme.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Delete</a>
+                            <!-- Link to Scheme -->
+                            <a href="<?php echo htmlspecialchars($row['scheme_link']); ?>" target="_blank" class="btn btn-info btn-sm">View Scheme</a>
                         </td>
                     </tr>
                 <?php } ?>
@@ -170,7 +178,7 @@ include('header.php');
             <li class="page-item">
                 <form method="get" action="" class="d-inline">
                     <select class="form-control form-control-sm" name="page_schemes" onchange="this.form.submit()">
-                        <?php for ($i = 1; $i <= ceil($total_states / $items_per_page); $i++): ?>
+                        <?php for ($i = 1; $i <= $total_schemes_pages; $i++): ?>
                             <option value="<?php echo $i; ?>" <?php if ($i == $page_schemes) echo 'selected'; ?>>Page <?php echo $i; ?></option>
                         <?php endfor; ?>
                     </select>
@@ -179,7 +187,7 @@ include('header.php');
 
             <!-- Next Button -->
             <li class="page-item">
-                <?php if ($page_schemes < ceil($total_states / $items_per_page)): ?>
+                <?php if ($page_schemes < $total_schemes_pages): ?>
                     <a class="page-link" href="?page_schemes=<?php echo $page_schemes + 1; ?>">Next</a>
                 <?php else: ?>
                     <span class="page-link disabled">Next</span>
