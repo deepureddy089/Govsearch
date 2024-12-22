@@ -3,7 +3,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$servername = "localhost:3306"; // Database host
+$servername = "localhost"; // Database host
 $username = "asse6007_admin"; // Database username
 $password = "123456"; // Database password
 $dbname = "asse6007_gov_schemes"; // Database name
