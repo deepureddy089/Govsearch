@@ -1,8 +1,24 @@
 <?php
-// Include the database connection
-include('db_connection.php'); 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Fetch filters from the URL
+// Include database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "government_schemes";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch filters
 $query = isset($_GET['query']) ? $_GET['query'] : '';
 $state = isset($_GET['state']) ? $_GET['state'] : '';
 $age_group = isset($_GET['age_group']) ? $_GET['age_group'] : '';
@@ -13,199 +29,116 @@ $results_per_page = 6;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $results_per_page;
 
-// Prepare SQL query with filters (using prepared statements to prevent SQL injection)
+// Build the SQL query dynamically
 $sql = "SELECT * FROM schemes WHERE 1=1";
-
-// Apply filters based on user input
-if ($query) {
-    $sql .= " AND scheme_name LIKE ?";
-}
-if ($state) {
-    $sql .= " AND state = ?";
-}
-if ($age_group) {
-    $sql .= " AND age_group = ?";
-}
-if ($caste) {
-    $sql .= " AND caste LIKE ?";
-}
-
-// Apply pagination
-$sql .= " LIMIT ?, ?";
-$stmt = $conn->prepare($sql);
-
-// Bind parameters to the query
 $params = [];
-if ($query) {
+$types = "";
+
+// Apply filters
+if (!empty($query)) {
+    $sql .= " AND scheme_name LIKE ?";
     $params[] = "%" . $query . "%";
+    $types .= "s";
 }
-if ($state) {
+if (!empty($state)) {
+    $sql .= " AND state = ?";
     $params[] = $state;
+    $types .= "s";
 }
-if ($age_group) {
+if (!empty($age_group)) {
+    $sql .= " AND age_group = ?";
     $params[] = $age_group;
+    $types .= "s";
 }
-if ($caste) {
+if (!empty($caste)) {
+    $sql .= " AND caste LIKE ?";
     $params[] = "%" . $caste . "%";
+    $types .= "s";
 }
 
-// Bind the offset and limit
+// Add pagination
+$sql .= " LIMIT ?, ?";
 $params[] = $offset;
 $params[] = $results_per_page;
+$types .= "ii";
+
+// Prepare the statement
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("Error in SQL preparation: " . $conn->error);
+}
+
+// Bind parameters if there are any
+if (!empty($types)) {
+    $stmt->bind_param($types, ...$params);
+}
 
 // Execute the query
-$stmt->bind_param(str_repeat("s", count($params) - 2) . "ii", ...$params);
-$stmt->execute();
+if (!$stmt->execute()) {
+    die("Error in query execution: " . $stmt->error);
+}
+
+// Fetch results
 $result = $stmt->get_result();
-
-// Fetch total count for pagination
-$count_sql = "SELECT COUNT(*) AS total FROM schemes WHERE 1=1";
-if ($query) {
-    $count_sql .= " AND scheme_name LIKE ?";
-}
-if ($state) {
-    $count_sql .= " AND state = ?";
-}
-if ($age_group) {
-    $count_sql .= " AND age_group = ?";
-}
-if ($caste) {
-    $count_sql .= " AND caste LIKE ?";
+if (!$result) {
+    die("Error in fetching results: " . $stmt->error);
 }
 
-$count_stmt = $conn->prepare($count_sql);
-$count_params = [];
-if ($query) {
-    $count_params[] = "%" . $query . "%";
-}
-if ($state) {
-    $count_params[] = $state;
-}
-if ($age_group) {
-    $count_params[] = $age_group;
-}
-if ($caste) {
-    $count_params[] = "%" . $caste . "%";
-}
-$count_stmt->bind_param(str_repeat("s", count($count_params)), ...$count_params);
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$total_results = $count_result->fetch_assoc()['total'];
-$total_pages = ceil($total_results / $results_per_page);
+// Count total results for pagination
+$total_sql = "SELECT COUNT(*) FROM schemes WHERE 1=1";
+if (!empty($query)) $total_sql .= " AND scheme_name LIKE '%" . $conn->real_escape_string($query) . "%'";
+if (!empty($state)) $total_sql .= " AND state = '" . $conn->real_escape_string($state) . "'";
+if (!empty($age_group)) $total_sql .= " AND age_group = '" . $conn->real_escape_string($age_group) . "'";
+if (!empty($caste)) $total_sql .= " AND caste LIKE '%" . $conn->real_escape_string($caste) . "%'";
 
-// Close statement for total count
-$count_stmt->close();
+$total_result = $conn->query($total_sql);
+$total_rows = $total_result->fetch_row()[0];
+$total_pages = ceil($total_rows / $results_per_page);
 ?>
 
-<?php include('header.php'); ?>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <style>
-        .scheme-logo {
-            width: 100px;
-            height: auto;
-        }
-
-        .disclaimer {
-            font-size: 0.8em;
-            color: #6c757d;
-            margin-top: 20px;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .btn-black {
-            background-color: black;
-            color: white;
-            border: 1px solid black;
-        }
-
-        .btn-black:hover {
-            background-color: #333;
-            color: white;
-        }
-
-        .card {
-            width: 18rem;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .pagination a {
-            margin: 0 5px;
-            padding: 5px 10px;
-            text-decoration: none;
-            color: black;
-            border: 1px solid #ccc;
-        }
-
-        .pagination a:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheme Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
+<body>
 <div class="container mt-5">
     <h2>Scheme Results</h2>
-
-    <div class="my-3">
-        <small>Showing results for:
-            <?php echo htmlspecialchars($query); ?>, 
-            <?php echo htmlspecialchars($age_group); ?>, 
-            <?php echo htmlspecialchars($caste); ?> 
-            (<?php echo $total_results; ?> results)
-        </small>
-    </div>
-
-    <div class="row">
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo '<div class="col-md-4 mb-4">';
-                echo '<div class="card">';
-                echo '<div class="card-body">';
-                echo '<h5 class="card-title">' . htmlspecialchars($row['scheme_name']) . '</h5>';
-                echo '<p class="card-text">State: ' . htmlspecialchars($row['state']) . '</p>';
-                echo '<p class="card-text">Age Group: ' . htmlspecialchars($row['age_group']) . '</p>';
-                echo '<p class="card-text">Caste: ' . htmlspecialchars($row['caste']) . '</p>';
-                echo '<img src="' . htmlspecialchars($row['state_logo']) . '" class="img-fluid scheme-logo" alt="State Logo">';
-                echo '<a href="' . htmlspecialchars($row['scheme_link']) . '" class="btn btn-black mt-3" target="_blank">Visit Scheme</a>';
-                echo '</div>';
-                echo '</div>';
-                echo '</div>';
-            }
-        } else {
-            echo '<div class="col-12"><p>No schemes found based on your filters.</p></div>';
-        }
-        ?>
-    </div>
+    <?php if ($result->num_rows > 0): ?>
+        <div class="row">
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo htmlspecialchars($row['scheme_name']); ?></h5>
+                            <p class="card-text">State: <?php echo htmlspecialchars($row['state']); ?></p>
+                            <p class="card-text">Age Group: <?php echo htmlspecialchars($row['age_group']); ?></p>
+                            <p class="card-text">Caste: <?php echo htmlspecialchars($row['caste']); ?></p>
+                            <a href="<?php echo htmlspecialchars($row['scheme_link']); ?>" class="btn btn-primary" target="_blank">Details</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
+    <?php else: ?>
+        <p>No schemes found.</p>
+    <?php endif; ?>
 
     <!-- Pagination -->
-    <div class="pagination">
-        <a href="?page=1&query=<?php echo htmlspecialchars($query); ?>&state=<?php echo htmlspecialchars($state); ?>&age_group=<?php echo htmlspecialchars($age_group); ?>&caste=<?php echo htmlspecialchars($caste); ?>">First</a>
-        <a href="?page=<?php echo max(1, $page - 1); ?>&query=<?php echo htmlspecialchars($query); ?>&state=<?php echo htmlspecialchars($state); ?>&age_group=<?php echo htmlspecialchars($age_group); ?>&caste=<?php echo htmlspecialchars($caste); ?>">Prev</a>
-        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-            <a href="?page=<?php echo $i; ?>&query=<?php echo htmlspecialchars($query); ?>&state=<?php echo htmlspecialchars($state); ?>&age_group=<?php echo htmlspecialchars($age_group); ?>&caste=<?php echo htmlspecialchars($caste); ?>"><?php echo $i; ?></a>
-        <?php } ?>
-        <a href="?page=<?php echo min($total_pages, $page + 1); ?>&query=<?php echo htmlspecialchars($query); ?>&state=<?php echo htmlspecialchars($state); ?>&age_group=<?php echo htmlspecialchars($age_group); ?>&caste=<?php echo htmlspecialchars($caste); ?>">Next</a>
-        <a href="?page=<?php echo $total_pages; ?>&query=<?php echo htmlspecialchars($query); ?>&state=<?php echo htmlspecialchars($state); ?>&age_group=<?php echo htmlspecialchars($age_group); ?>&caste=<?php echo htmlspecialchars($caste); ?>">Last</a>
-    </div>
-
-    <small class="text-muted d-block mt-3 disclaimer">
-        Disclaimer: This information is provided from external websites, and we are not liable for the accuracy and validity of the data. Users should review and consume the information as per their own decision.
-    </small>
+    <nav>
+        <ul class="pagination justify-content-center">
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                    <a class="page-link" href="?query=<?php echo urlencode($query); ?>&state=<?php echo urlencode($state); ?>&age_group=<?php echo urlencode($age_group); ?>&caste=<?php echo urlencode($caste); ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
 </div>
+</body>
+</html>
 
-<?php include('footer.php'); ?>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+<?php $conn->close(); ?>
