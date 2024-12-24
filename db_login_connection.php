@@ -1,5 +1,4 @@
 <?php
-session_start();
 include('db_login_connection.php'); // Include the new MySQLi connection
 
 // Check if the user is already logged in
