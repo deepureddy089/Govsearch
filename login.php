@@ -1,5 +1,7 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 include('db_login_connection.php'); // Include the new admin login connection
 
 // Check if the user is already logged in
@@ -13,19 +15,28 @@ if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // SQL query to fetch user details from the users table in the admin_login database
+    // SQL query to fetch user details from the users table
     $query = "SELECT * FROM users WHERE username = ?";
     $stmt = $conn_login->prepare($query);
+
+    if ($stmt === false) {
+        die('Error preparing the query: ' . $conn_login->error); // Show preparation error
+    }
+
     $stmt->bind_param("s", $username); // Bind the username parameter
     $stmt->execute();
+
     $result = $stmt->get_result();
 
-    // Check if the user exists
+    if ($result === false) {
+        die('Error executing the query: ' . $stmt->error); // Show execution error
+    }
+
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         
-        // Check if the password matches (plain-text comparison here, but hash in real production)
-        if ($password === $user['password']) {
+        // Check if the password matches (using password_verify for security)
+        if (password_verify($password, $user['password'])) {
             $_SESSION['admin'] = $username; // Set session variable for successful login
             header('Location: admin_dashboard.php'); // Redirect to the admin dashboard
             exit;
