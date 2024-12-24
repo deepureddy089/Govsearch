@@ -1,38 +1,16 @@
 <?php
-include('db_login_connection.php'); // Include the new MySQLi connection
+$servername = "localhost"; // Database host
+$username = "asse6007_admin"; // Database username (or your custom DB username)
+$password = "123456"; // Database password (or your custom DB password)
+$dbname = "asse6007_gov_schemes"; // The database name for login functionality
 
-// Check if the user is already logged in
-if (isset($_SESSION['admin'])) {
-    // Redirect to admin dashboard if logged in
-    header('Location: admin_dashboard.php');
-    exit;
+// Create a connection to the admin login database
+$conn_login = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn_login->connect_error) {
+    die("Connection failed: " . $conn_login->connect_error);  // This will show any error in the connection
+} else {
+    echo "Connection successful";  // Just to confirm the connection is working
 }
 
-if (isset($_POST['submit'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // SQL query to fetch user details from the users table
-    $query = "SELECT * FROM users WHERE username = ?";
-    $stmt = $conn_login->prepare($query);
-    $stmt->bind_param("s", $username); // Bind the username parameter
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // Check if the user exists and verify password
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        
-        // Verify the password (plain-text comparison, you should use hashed passwords in production)
-        if ($password === $user['password']) {
-            $_SESSION['admin'] = $username; // Set session variable for successful login
-            header('Location: admin_dashboard.php'); // Redirect to the admin dashboard
-            exit;
-        } else {
-            $error = "Invalid password!";
-        }
-    } else {
-        $error = "No user found with that username!";
-    }
-}
 ?>
