@@ -14,7 +14,7 @@
 
     <?php include 'search-form.php';?>
 
-    <?php include 'footer.php'; ?>
+    <?php include 'footer.php';?>
 
    
 </body>

@@ -1,0 +1,8 @@
+Options -Indexes
+# Enable URL Rewriting (required for clean URLs)
+RewriteEngine On
+php_value session.save_path "/home/asse6007/tmp"
+
+
+SetHandler application/x-httpd-alt-php72
+

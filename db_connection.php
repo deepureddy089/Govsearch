@@ -1,55 +1,18 @@
 <?php
-// db_connection.php
+// Example for db_connection.php
+$servername = "localhost"; // Database host
+$username = "asse6007_admin"; // Database username (or your custom DB username)
+$password = "00000000"; // Database password (or your custom DB password)
+$dbname = "asse6007_gov_schemes"; // The database name for login functionality
 
-// Database configuration
-$server = "localhost";
-$username = "root";  // Update with your database username
-$password = "";      // Update with your database password
-$database = "government_schemes";  // Database name
+// Create a new MySQL connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Create connection using MySQLi with error handling
-$conn = new mysqli($server, $username, $password, $database);
-
-// Check connection and handle errors securely
+// Check if the connection was successful
 if ($conn->connect_error) {
-    // Log the error to a file or monitoring system (do not show to the user)
-    error_log("Database connection failed: " . $conn->connect_error);
-    die("Connection failed. Please try again later.");
-} else {
-    // Optionally, you can set the character set to UTF-8 for proper encoding of special characters
-    $conn->set_charset("utf8");
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Function for preparing and executing safe queries
-function executeQuery($query, $params = []) {
-    global $conn;
-
-    // Prepare statement
-    $stmt = $conn->prepare($query);
-    if ($stmt === false) {
-        // Log the error
-        error_log("MySQL prepare error: " . $conn->error);
-        return false;
-    }
-
-    // Bind parameters if any (using 's' for strings, 'i' for integers, etc.)
-    if ($params) {
-        // Dynamically bind the parameters
-        $types = str_repeat('s', count($params)); // Assuming all parameters are strings ('s')
-        $stmt->bind_param($types, ...$params);
-    }
-
-    // Execute the query
-    $result = $stmt->execute();
-    if (!$result) {
-        // Log the error
-        error_log("MySQL execute error: " . $stmt->error);
-        return false;
-    }
-
-    // Return result
-    return $result;
-}
-
-// If everything is set up correctly, you will have a successful connection
+// Ensure the database is selected (optional if provided in the constructor)
+$conn->select_db($dbname);
 ?>
