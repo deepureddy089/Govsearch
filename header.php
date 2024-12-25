@@ -1,5 +1,4 @@
 <?php
-session_start(); // Ensure the session is started
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,51 +17,9 @@ session_start(); // Ensure the session is started
     <meta name="twitter:image" content="path/to/your-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <title>Government Schemes Search</title>
-    
-    <!-- Schema.org Markup for Google+ -->
-    <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "WebSite",
-      "name": "GovSearch",
-      "url": "https://www.yourwebsite.com",
-      "description": "GovSearch helps you find a list of government schemes from Indian state and central governments. Easily search and explore available schemes.",
-      "publisher": {
-        "@type": "Organization",
-        "name": "GovSearch"
-      }
-    }
-    </script>
-
-    <!-- Additional Structured Data for Website -->
-    <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "Organization",
-      "name": "GovSearch",
-      "url": "https://www.yourwebsite.com",
-      "logo": "https://www.yourwebsite.com/logo.png",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+1-800-123-4567",
-        "contactType": "Customer Service",
-        "areaServed": "IN",
-        "availableLanguage": "English"
-      }
-    }
-    </script>
 
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXXX-X"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-XXXXXXXXX-X'); // Replace with your Google Analytics ID
-    </script>
 
     <style>
         body {
@@ -77,18 +34,30 @@ session_start(); // Ensure the session is started
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="https://localhost/govsearch/index.php">GovSearch</a>
+        <a class="navbar-brand" href="https://assetsalesindia.com/">GovSearch</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="https://localhost/govsearch/index.php">Home</a></li> 
-                <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
-                <!-- Add Dashboard Menu if User is Logged In -->
-                <?php if (isset($_SESSION['admin'])) { ?>
-                    <li class="nav-item"><a class="nav-link" href="admin_dashboard.php">Dashboard</a></li>
-                <?php } ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://assetsalesindia.com/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.php">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="admin_dashboard.php">Dashboard</a>
+                </li>
+                
+               
             </ul>
         </div>
     </nav>
+
+    <!-- Bootstrap JavaScript (Ensure Proper Functionality of the Menu Toggle) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

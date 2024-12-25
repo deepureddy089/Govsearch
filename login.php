@@ -16,20 +16,11 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
 
     // SQL query to fetch user details from the users table
-    $query = "SELECT * FROM users WHERE username = ?";
-    $stmt = $conn_login->prepare($query);
-
-    if ($stmt === false) {
-        die('Error preparing the query: ' . $conn_login->error); // Show preparation error
-    }
-
-    $stmt->bind_param("s", $username); // Bind the username parameter
-    $stmt->execute();
-
-    $result = $stmt->get_result();
+    $query = "SELECT * FROM users WHERE username = '$username'"; // Removed parameter binding
+    $result = $conn_login->query($query);
 
     if ($result === false) {
-        die('Error executing the query: ' . $stmt->error); // Show execution error
+        die('Error executing the query: ' . $conn_login->error); // Show execution error
     }
 
     if ($result->num_rows > 0) {

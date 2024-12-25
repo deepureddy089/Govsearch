@@ -1,10 +1,9 @@
 <?php
 // Include database connection file
-$servername = "localhost:3306"; // Database host
+$servername = "localhost"; // Database host
 $username = "asse6007_admin"; // Database username (or your custom DB username)
-$password = "123456"; // Database password (or your custom DB password)
+$password = "00000000"; // Database password (or your custom DB password)
 $dbname = "asse6007_gov_schemes"; // The database name for login functionality
-
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -32,15 +31,60 @@ $ageGroupsResult = $conn->query($ageGroupQuery);
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Your original styles */
-        body { background-color: #ffffff; color: #000000; font-family: Arial, sans-serif; }
-        .search-container { margin: 10% auto; width: 70%; }
-        .search-bar, .search-button { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .search-bar { border: none; }
-        .search-button { background-color: #ffffff; color: #000000; border: none; }
-        .search-button:hover { background-color: #000000; color: #ffffff; }
-        .filter-dropdown { border: 2px solid #000000; background-color: #ffffff; color: #000000; }
-        .description { font-size: 1.2rem; color: #333; margin-top: 30px; }
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+        .search-container {
+            margin: auto;
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+            flex-grow: 1;
+        }
+        .search-bar,
+        .search-button {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .search-bar {
+            border: none;
+        }
+        .search-button {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+        }
+        .search-button:hover {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .filter-dropdown {
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        footer {
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+        @media (max-width: 576px) {
+            .search-container {
+                padding: 10px;
+            }
+            .form-row .col-md-3 {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -54,7 +98,7 @@ $ageGroupsResult = $conn->query($ageGroupQuery);
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-md-3 mb-3">
+                <div class="col-12 col-md-3 mb-3">
                     <select class="form-control filter-dropdown" name="state">
                         <option value="">Select State</option>
                         <?php
@@ -64,7 +108,7 @@ $ageGroupsResult = $conn->query($ageGroupQuery);
                         ?>
                     </select>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-12 col-md-3 mb-3">
                     <select class="form-control filter-dropdown" name="age_group">
                         <option value="">Select Age Group</option>
                         <?php
@@ -74,7 +118,7 @@ $ageGroupsResult = $conn->query($ageGroupQuery);
                         ?>
                     </select>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-12 col-md-3 mb-3">
                     <select class="form-control filter-dropdown" name="caste">
                         <option value="">Select Caste</option>
                         <option value="OC">OC</option>
@@ -87,6 +131,7 @@ $ageGroupsResult = $conn->query($ageGroupQuery);
             </div>
         </form>
     </div>
+    
 </body>
 </html>
 

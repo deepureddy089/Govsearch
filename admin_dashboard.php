@@ -1,28 +1,40 @@
 <?php
 session_start();
 include('db_connection.php');
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-// Check if the user is logged in
+// Define the number of items per page
+$items_per_page = 10; // Number of items to display per page
+
+// Check if the user is logged in, this is admin-adashboard.php
 if (!isset($_SESSION['admin'])) {
     header('Location: login.php');
     exit;
 }
 
 // Get the current page number for summary table from the URL or default to page 1
-$items_per_page = 10; // Number of items to display per page for summary
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $items_per_page;
 
 // Fetch the summary of schemes by state with pagination
-$summary_sql = "SELECT state, COUNT(*) AS scheme_count FROM schemes GROUP BY state LIMIT ?, ?";
-$summary_stmt = $conn->prepare($summary_sql);
-$summary_stmt->bind_param("ii", $offset, $items_per_page);
-$summary_stmt->execute();
-$summary_result = $summary_stmt->get_result();
+$summary_sql = "SELECT state, COUNT(*) AS scheme_count FROM schemes GROUP BY state LIMIT $offset, $items_per_page";
+$summary_result = $conn->query($summary_sql);
 
-// Get the total number of states for pagination
+// Check if the query was successful
+if (!$summary_result) {
+    die('Error executing query: ' . $conn->error);
+}
+
+// Fetch the total number of states for pagination
 $total_states_sql = "SELECT COUNT(DISTINCT state) AS total_states FROM schemes";
 $total_states_result = $conn->query($total_states_sql);
+
+// Check if the query was successful
+if (!$total_states_result) {
+    die('Error executing query: ' . $conn->error);
+}
+
 $total_states = $total_states_result->fetch_assoc()['total_states'];
 $total_pages = ceil($total_states / $items_per_page);
 
@@ -33,15 +45,23 @@ $offset_schemes = ($page_schemes - 1) * $items_per_page;
 // Get the total number of schemes for pagination
 $total_schemes_sql = "SELECT COUNT(*) AS total_schemes FROM schemes";
 $total_schemes_result = $conn->query($total_schemes_sql);
+
+// Check if the query was successful
+if (!$total_schemes_result) {
+    die('Error executing query: ' . $conn->error);
+}
+
 $total_schemes = $total_schemes_result->fetch_assoc()['total_schemes'];
 $total_schemes_pages = ceil($total_schemes / $items_per_page);
 
 // Fetch all schemes with pagination for the "All Schemes" section
-$sql_schemes = "SELECT * FROM schemes LIMIT ?, ?";
-$stmt_schemes = $conn->prepare($sql_schemes);
-$stmt_schemes->bind_param("ii", $offset_schemes, $items_per_page);
-$stmt_schemes->execute();
-$result_schemes = $stmt_schemes->get_result();
+$sql_schemes = "SELECT * FROM schemes LIMIT $offset_schemes, $items_per_page";
+$result_schemes = $conn->query($sql_schemes);
+
+// Check if the query was successful
+if (!$result_schemes) {
+    die('Error executing query: ' . $conn->error);
+}
 
 // Get the logged-in user's username
 $logged_in_user = $_SESSION['admin']; 

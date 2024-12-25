@@ -1,14 +1,15 @@
 <?php
+
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "government_schemes";
+$servername = "localhost"; // Database host
+$username = "asse6007_admin"; // Database username (or your custom DB username)
+$password = "00000000"; // Database password (or your custom DB password)
+$dbname = "asse6007_gov_schemes"; // The database name for login functionality
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -105,6 +106,7 @@ $total_pages = ceil($total_rows / $results_per_page);
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<?php include('header.php'); ?>
 <div class="container mt-5">
     <h2>Scheme Results</h2>
     <?php if ($result->num_rows > 0): ?>
@@ -138,6 +140,7 @@ $total_pages = ceil($total_rows / $results_per_page);
         </ul>
     </nav>
 </div>
+<?php include('footer.php'); ?>
 </body>
 </html>
 
